@@ -410,8 +410,9 @@
 <span class="kn">from</span> <span class="nn">autorag.nodes.passagefilter.base</span> <span class="kn">import</span> <span class="n">BasePassageFilter</span>
 <span class="kn">from</span> <span class="nn">autorag.utils.util</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">embedding_query_content</span><span class="p">,</span>
-	<span class="n">result_to_dataframe</span><span class="p">,</span>
 	<span class="n">empty_cuda_cache</span><span class="p">,</span>
+	<span class="n">result_to_dataframe</span><span class="p">,</span>
+	<span class="n">pop_params</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -424,10 +425,10 @@
 
 <span class="sd">		:param project_dir: The project directory to use for initializing the module</span>
 <span class="sd">		:param embedding_model: The embedding model string to use for calculating similarity</span>
-<span class="sd">			Default is &quot;openai&quot; which is OpenAI text-embedding-ada-002 embedding model.</span>
+<span class="sd">		        Default is &quot;openai&quot; which is OpenAI text-embedding-ada-002 embedding model.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">project_dir</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-		<span class="n">embedding_model_str</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;embedding_model&quot;</span><span class="p">,</span> <span class="s2">&quot;openai&quot;</span><span class="p">)</span>
+		<span class="n">embedding_model_str</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;embedding_model&quot;</span><span class="p">,</span> <span class="s2">&quot;openai&quot;</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span> <span class="o">=</span> <span class="n">embedding_models</span><span class="p">[</span><span class="n">embedding_model_str</span><span class="p">]()</span>
 
 	<span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -439,6 +440,7 @@
 <a class="viewcode-back" href="../../../../api_spec/autorag.nodes.passagefilter.html#autorag.nodes.passagefilter.similarity_threshold_cutoff.SimilarityThresholdCutoff.pure">[docs]</a>
 	<span class="nd">@result_to_dataframe</span><span class="p">([</span><span class="s2">&quot;retrieved_contents&quot;</span><span class="p">,</span> <span class="s2">&quot;retrieved_ids&quot;</span><span class="p">,</span> <span class="s2">&quot;retrieve_scores&quot;</span><span class="p">])</span>
 	<span class="k">def</span> <span class="nf">pure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous_result</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="n">kwargs</span> <span class="o">=</span> <span class="n">pop_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pure</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
 		<span class="n">queries</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cast_to_run</span><span class="p">(</span><span class="n">previous_result</span><span class="p">)</span>
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pure</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
