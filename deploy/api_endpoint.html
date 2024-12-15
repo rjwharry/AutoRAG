@@ -485,6 +485,7 @@ It automatically creates ngrok tunnel to your local server.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">content</span></code> (string): The content of the passage.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">doc_id</span></code> (string): Document ID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">score</span></code> (string): The relevance score of the retrieved passage.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">filepath</span></code> (string, nullable): File path.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">file_page</span></code> (integer, nullable): File page number.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">start_idx</span></code> (integer, nullable): Start index.</p></li>
@@ -532,26 +533,9 @@ It will ignore generator and prompt maker, only return retrieved passages.</p>
 <h4>Success Response<a class="headerlink" href="#success-response" title="Link to this heading">¶</a></h4>
 <p><strong>HTTP Status Code:</strong> <code class="docutils literal notranslate"><span class="pre">200</span> <span class="pre">OK</span></code></p>
 </section>
-<section id="response-body">
-<h4>Response Body<a class="headerlink" href="#response-body" title="Link to this heading">¶</a></h4>
-<p>On a successful retrieval, the response will contain a JSON object structured as follows:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;passages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;doc_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unique-document-id-1&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Content of the retrieved document.&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.95</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;doc_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;unique-document-id-2&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Content of another retrieved document.&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.89</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
-</div>
 </section>
+<section id="response-body">
+<h3>Response Body<a class="headerlink" href="#response-body" title="Link to this heading">¶</a></h3>
 <section id="properties">
 <h4>Properties<a class="headerlink" href="#properties" title="Link to this heading">¶</a></h4>
 <ul class="simple">
@@ -560,6 +544,10 @@ It will ignore generator and prompt maker, only return retrieved passages.</p>
 <li><p><strong>doc_id</strong> (string): The unique identifier for each document.</p></li>
 <li><p><strong>content</strong> (string): The content of the retrieved document.</p></li>
 <li><p><strong>score</strong> (number, float): The relevance score of the retrieved document.</p></li>
+<li><p><strong>filepath</strong> (string, optional): The file path of the document.</p></li>
+<li><p><strong>file_page</strong> (integer, optional): The page number of the document.</p></li>
+<li><p><strong>start_idx</strong> (integer, optional): The start index of the retrieved passage from the parsed data.</p></li>
+<li><p><strong>end_idx</strong> (integer, optional): The end index of the retrieved passage from the parsed data.</p></li>
 </ul>
 </li>
 </ul>
@@ -571,12 +559,20 @@ It will ignore generator and prompt maker, only return retrieved passages.</p>
 <span class="w">    </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;doc_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;doc123&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Artificial Intelligence is transforming industries.&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.98</span>
+<span class="w">      </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.98</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;filepath&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;path/to/file&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;file_page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;start_idx&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;end_idx&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">150</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;doc_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;doc456&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The future of AI includes advancements in machine learning.&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.92</span>
+<span class="w">      </span><span class="nt">&quot;score&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.92</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;filepath&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;file_page&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;start_idx&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;end_idx&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
@@ -622,6 +618,7 @@ It will ignore generator and prompt maker, only return retrieved passages.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">content</span></code> (string): The content of the passage.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">doc_id</span></code> (string): Document ID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">score</span></code> (string): The relevance score of the retrieved passage.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">filepath</span></code> (string, nullable): File path.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">file_page</span></code> (integer, nullable): File page number.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">start_idx</span></code> (integer, nullable): Start index.</p></li>
@@ -766,8 +763,16 @@ It will ignore generator and prompt maker, only return retrieved passages.</p>
 </pre></div>
 </div>
 </section>
+</section>
 <section id="id3">
-<h4><code class="docutils literal notranslate"><span class="pre">/version</span></code> (GET)<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
+<h3><code class="docutils literal notranslate"><span class="pre">/v1/retrieve</span></code> (POST)<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;http://example.com/v1/retrieve&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;query&quot;: &quot;example query&quot;}&#39;</span>
+</pre></div>
+</div>
+<section id="id4">
+<h4><code class="docutils literal notranslate"><span class="pre">/version</span></code> (GET)<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>GET<span class="w"> </span><span class="s2">&quot;http://example.com/version&quot;</span>
 </pre></div>
 </div>
@@ -842,7 +847,9 @@ It will ignore generator and prompt maker, only return retrieved passages.</p>
 </li>
 <li><a class="reference internal" href="#example-request">Example Request</a><ul>
 <li><a class="reference internal" href="#success-response">Success Response</a></li>
-<li><a class="reference internal" href="#response-body">Response Body</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#response-body">Response Body</a><ul>
 <li><a class="reference internal" href="#properties">Properties</a></li>
 <li><a class="reference internal" href="#example-response">Example Response</a></li>
 </ul>
@@ -856,7 +863,10 @@ It will ignore generator and prompt maker, only return retrieved passages.</p>
 <li><a class="reference internal" href="#curl-commands"><code class="docutils literal notranslate"><span class="pre">curl</span></code> Commands</a><ul>
 <li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">/v1/run</span></code> (POST)</a></li>
 <li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">/v1/stream</span></code> (POST)</a></li>
-<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">/version</span></code> (GET)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">/v1/retrieve</span></code> (POST)</a><ul>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">/version</span></code> (GET)</a></li>
 </ul>
 </li>
 </ul>

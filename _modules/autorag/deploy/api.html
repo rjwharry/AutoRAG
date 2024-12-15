@@ -437,6 +437,7 @@
 <span class="k">class</span> <span class="nc">RetrievedPassage</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 	<span class="n">content</span><span class="p">:</span> <span class="nb">str</span>
 	<span class="n">doc_id</span><span class="p">:</span> <span class="nb">str</span>
+	<span class="n">score</span><span class="p">:</span> <span class="nb">float</span>
 	<span class="n">filepath</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 	<span class="n">file_page</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 	<span class="n">start_idx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -452,19 +453,10 @@
 
 
 
-<div class="viewcode-block" id="Passage">
-<a class="viewcode-back" href="../../../api_spec/autorag.deploy.html#autorag.deploy.api.Passage">[docs]</a>
-<span class="k">class</span> <span class="nc">Passage</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-	<span class="n">doc_id</span><span class="p">:</span> <span class="nb">str</span>
-	<span class="n">content</span><span class="p">:</span> <span class="nb">str</span>
-	<span class="n">score</span><span class="p">:</span> <span class="nb">float</span></div>
-
-
-
 <div class="viewcode-block" id="RetrievalResponse">
 <a class="viewcode-back" href="../../../api_spec/autorag.deploy.html#autorag.deploy.api.RetrievalResponse">[docs]</a>
 <span class="k">class</span> <span class="nc">RetrievalResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-	<span class="n">passages</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Passage</span><span class="p">]</span></div>
+	<span class="n">passages</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RetrievedPassage</span><span class="p">]</span></div>
 
 
 
@@ -578,18 +570,9 @@
 				<span class="n">previous_result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">drop_previous_result</span><span class="p">,</span> <span class="n">new_result</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 			<span class="c1"># Simulate processing the query</span>
-			<span class="n">retrieved_contents</span> <span class="o">=</span> <span class="n">previous_result</span><span class="p">[</span><span class="s2">&quot;retrieved_contents&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-			<span class="n">retrieved_ids</span> <span class="o">=</span> <span class="n">previous_result</span><span class="p">[</span><span class="s2">&quot;retrieved_ids&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-			<span class="n">retrieve_scores</span> <span class="o">=</span> <span class="n">previous_result</span><span class="p">[</span><span class="s2">&quot;retrieve_scores&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">retrieved_passages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_retrieve_passage</span><span class="p">(</span><span class="n">previous_result</span><span class="p">)</span>
 
-			<span class="n">retrieval_response</span> <span class="o">=</span> <span class="n">RetrievalResponse</span><span class="p">(</span>
-				<span class="n">passages</span><span class="o">=</span><span class="p">[</span>
-					<span class="n">Passage</span><span class="p">(</span><span class="n">doc_id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">)</span>
-					<span class="k">for</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-						<span class="n">retrieved_ids</span><span class="p">,</span> <span class="n">retrieved_contents</span><span class="p">,</span> <span class="n">retrieve_scores</span>
-					<span class="p">)</span>
-				<span class="p">]</span>
-			<span class="p">)</span>
+			<span class="n">retrieval_response</span> <span class="o">=</span> <span class="n">RetrievalResponse</span><span class="p">(</span><span class="n">passages</span><span class="o">=</span><span class="n">retrieved_passages</span><span class="p">)</span>
 			<span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">retrieval_response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()),</span> <span class="mi">200</span>
 
 		<span class="nd">@self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/v1/stream&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
@@ -694,6 +677,7 @@
 	<span class="k">def</span> <span class="nf">extract_retrieve_passage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">RetrievedPassage</span><span class="p">]:</span>
 		<span class="n">retrieved_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;retrieved_ids&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 		<span class="n">contents</span> <span class="o">=</span> <span class="n">fetch_contents</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corpus_df</span><span class="p">,</span> <span class="p">[</span><span class="n">retrieved_ids</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">scores</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;retrieve_scores&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 		<span class="k">if</span> <span class="s2">&quot;path&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">corpus_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
 			<span class="n">paths</span> <span class="o">=</span> <span class="n">fetch_contents</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">corpus_df</span><span class="p">,</span> <span class="p">[</span><span class="n">retrieved_ids</span><span class="p">],</span> <span class="n">column_name</span><span class="o">=</span><span class="s2">&quot;path&quot;</span><span class="p">)[</span>
 				<span class="mi">0</span>
@@ -712,9 +696,15 @@
 		<span class="n">start_end_indices</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">start_end_indices</span><span class="p">)</span>
 		<span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
 			<span class="nb">map</span><span class="p">(</span>
-				<span class="k">lambda</span> <span class="n">content</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">start_end_idx</span><span class="p">:</span> <span class="n">RetrievedPassage</span><span class="p">(</span>
+				<span class="k">lambda</span> <span class="n">content</span><span class="p">,</span>
+				<span class="n">doc_id</span><span class="p">,</span>
+				<span class="n">score</span><span class="p">,</span>
+				<span class="n">path</span><span class="p">,</span>
+				<span class="n">metadata</span><span class="p">,</span>
+				<span class="n">start_end_idx</span><span class="p">:</span> <span class="n">RetrievedPassage</span><span class="p">(</span>
 					<span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
 					<span class="n">doc_id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span>
+					<span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">,</span>
 					<span class="n">filepath</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
 					<span class="n">file_page</span><span class="o">=</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;page&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
 					<span class="n">start_idx</span><span class="o">=</span><span class="n">start_end_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">start_end_idx</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
@@ -722,6 +712,7 @@
 				<span class="p">),</span>
 				<span class="n">contents</span><span class="p">,</span>
 				<span class="n">retrieved_ids</span><span class="p">,</span>
+				<span class="n">scores</span><span class="p">,</span>
 				<span class="n">paths</span><span class="p">,</span>
 				<span class="n">metadatas</span><span class="p">,</span>
 				<span class="n">start_end_indices</span><span class="p">,</span>
